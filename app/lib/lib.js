@@ -1,21 +1,4 @@
 export const imageParser = (content) => {
-  if (!content)
-    return `/images/dummy-photo-${Math.round(Math.random() * 1) + 1}.jpg`;
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(content, "text/html");
-
-  const images = doc.querySelectorAll("img");
-
-  for (const image of images) {
-    const src = image.getAttribute("src");
-    if (src && src.endsWith(".jpg")) {
-      console.log("URL Cover valid dengan ekstensi .jpg:", src);
-      return src;
-    }
-  }
-
-  console.log("Tidak ada gambar dengan ekstensi .jpg.");
   return `/images/dummy-photo-${Math.round(Math.random() * 1) + 1}.jpg`;
 };
 

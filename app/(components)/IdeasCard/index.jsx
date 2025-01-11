@@ -7,7 +7,7 @@ const IdeasCard = ({ title, publishedDate, url, imageSrc }) => {
     <div className="relative flex flex-col my-6 bg-white shadow-sm border border-slate-200 rounded-lg w-[300px]">
       <Link href={url}>
         <div className="relative h-56 overflow-hidden text-white rounded-md object-cover">
-          <Image src={imageSrc} alt="card-image" fill />
+          <Image src={imageSrc} alt="card-image" loading="lazy" fill />
         </div>
         <div className="p-4">
           <h6 className="mb-2 text-slate-400 text-md font-semibold">

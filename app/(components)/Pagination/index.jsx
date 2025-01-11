@@ -3,11 +3,9 @@
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const Pagination = () => {
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const currentPage = parseInt(searchParams.get("page") || "1");
 
   const handlePageChange = (page) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -16,6 +14,22 @@ const Pagination = () => {
     else params.set("page", page);
 
     router.push(`?${params.toString()}`);
+    if (onPageChange) onPageChange(page);
+  };
+
+  const generatePageNumbers = () => {
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage < maxVisiblePages - 1) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    return Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i
+    );
   };
 
   return (
@@ -44,7 +58,7 @@ const Pagination = () => {
         &lt;
       </button>
 
-      {[1, 2, 3, 4, 5].map((page) => (
+      {generatePageNumbers().map((page) => (
         <button
           key={page}
           onClick={() => handlePageChange(page)}
@@ -60,9 +74,9 @@ const Pagination = () => {
 
       <button
         onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === 5}
+        disabled={currentPage === totalPages}
         className={`rounded-full p-2 text-sm ${
-          currentPage === 5
+          currentPage === totalPages
             ? "text-gray-400 cursor-not-allowed"
             : "hover:text-orange-500"
         }`}
@@ -71,10 +85,10 @@ const Pagination = () => {
       </button>
 
       <button
-        onClick={() => handlePageChange(5)}
-        disabled={currentPage === 5}
+        onClick={() => handlePageChange(totalPages)}
+        disabled={currentPage === totalPages}
         className={`rounded-full p-2 text-sm ${
-          currentPage === 5
+          currentPage === totalPages
             ? "text-gray-400 cursor-not-allowed"
             : "hover:text-orange-500"
         }`}

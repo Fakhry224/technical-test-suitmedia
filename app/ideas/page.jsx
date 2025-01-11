@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import HeroSection from "./HeroSection";
-import Navbar from "../(components)/Navbar";
 import SelectButton from "../(components)/SelectButton";
 import IdeasCard from "../(components)/IdeasCard";
 import Pagination from "../(components)/Pagination";
@@ -12,15 +11,32 @@ const IdeasPage = () => {
   const BASE_URL_IDEAS = `${process.env.NEXT_PUBLIC_BASE_URL}/ideas`;
   const API_URL_IDEAS = `${process.env.NEXT_PUBLIC_API_URL}/ideas`;
 
-  const [ideasData, setIdeasData] = useState(null);
+  const [ideasData, setIdeasData] = useState([]);
   const [showPage, setShowPage] = useState(10);
   const [sortItem, setSortItem] = useState("Newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const itemPerPage = ["10", "20", "50"];
-  const sortBy = ["Newest", "Oldest"];
+  const [itemPerPage, setItemPerPage] = useState(["10", "20", "50"]);
+  const [sortBy, setSortBy] = useState(["Newest", "Oldest"]);
+
+  useEffect(() => {
+    setItemPerPage((prev) => {
+      const updated = [
+        String(showPage),
+        ...prev.filter((item) => item !== String(showPage)),
+      ];
+      return updated;
+    });
+  }, [showPage]);
+
+  useEffect(() => {
+    setSortBy((prev) => {
+      const updated = [sortItem, ...prev.filter((item) => item !== sortItem)];
+      return updated;
+    });
+  }, [sortItem]);
 
   const buildQueryParams = () => {
     const sortValue = sortItem === "Newest" ? "-published_at" : "published_at";
@@ -35,6 +51,9 @@ const IdeasPage = () => {
     }
 
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
         const response = await fetch(`${API_URL_IDEAS}${buildQueryParams()}`, {
           headers: {
@@ -44,12 +63,10 @@ const IdeasPage = () => {
         });
 
         if (!response.ok) {
-          console.log("Error fetching data");
           throw new Error("Failed to fetch data");
         }
 
         const data = await response.json();
-
         setIdeasData(data.data);
       } catch (error) {
         setError(error.message);
@@ -57,37 +74,30 @@ const IdeasPage = () => {
         setLoading(false);
       }
     };
+
     fetchData();
-  }, [API_URL_IDEAS]);
+  }, [API_URL_IDEAS, currentPage, showPage, sortItem]);
 
-  const filteredData = data
-    .sort((a, b) => {
-      if (sortItem === "Newest") return new Date(b.date) - new Date(a.date);
-      return new Date(a.date) - new Date(b.date);
-    })
-    .slice(0, showPage);
-
-  // if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error}</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="flex flex-col h-screen w-full bg-white text-black">
-      {/* <Navbar /> */}
       <div className="flex flex-col">
         <HeroSection />
-        <div className="flex items-center justify-between mx-24 my-16">
-          <p>
-            Showing 1 - {filteredData.length} of {data.length}
+        <div className="flex flex-col md:flex-row items-center justify-between mx-12 md:mx-24 my-16">
+          <p className="my-10 md:my-0">
+            Showing 1 - {ideasData.length} of {ideasData.length}
           </p>
-          <div className="flex gap-10">
-            <div className="flex items-center gap-5">
+          <div className="flex flex-col md:flex-row gap-10">
+            <div className="flex items-center justify-between gap-5 md:justify-normal ">
               Show per page:
               <SelectButton
                 options={itemPerPage}
                 handler={(value) => setShowPage(Number(value))}
               />
             </div>
-            <div className="flex items-center gap-5">
+            <div className="flex items-center justify-between gap-5 md:justify-normal">
               Sort by:
               <SelectButton
                 options={sortBy}
@@ -97,17 +107,16 @@ const IdeasPage = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          <div className="grid grid-cols-4 gap-5">
-            {ideasData &&
-              ideasData.map((data) => (
-                <IdeasCard
-                  key={data.id}
-                  title={data.title}
-                  publishedDate={publishedDateConverter(data.published_at)}
-                  url={`${BASE_URL_IDEAS}/${data.slug}`}
-                  imageSrc={imageParser(data.content)}
-                />
-              ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {ideasData.map((data) => (
+              <IdeasCard
+                key={data.id}
+                title={data.title}
+                publishedDate={publishedDateConverter(data.published_at)}
+                url={`${BASE_URL_IDEAS}/${data.slug}`}
+                imageSrc={imageParser(data.content)}
+              />
+            ))}
           </div>
         </div>
         <div className="flex justify-center my-10">
