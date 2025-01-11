@@ -59,7 +59,7 @@ const Navbar = () => {
             width={150}
           />
         </div>
-        <div className="h-fit text-white font-semibold text-md">
+        <div className="h-fit text-white font-semibold text-lg">
           <ul className="flex gap-10 items-center">
             {navLinks.map((link) => (
               <Link
@@ -67,8 +67,8 @@ const Navbar = () => {
                 href={link.href}
                 className={`hover:text-slate-700 ${
                   pathname === link.href
-                    ? "border-b-2 border-white"
-                    : "border-b-2 border-transparent"
+                    ? "border-b-4 border-white"
+                    : "border-b-4 border-transparent"
                 } pb-1`}
               >
                 {link.label}
