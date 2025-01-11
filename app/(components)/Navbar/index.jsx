@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const [isScrollingUp, setIsScrollingUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isAtTop, setIsAtTop] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +33,15 @@ const Navbar = () => {
     };
   }, [lastScrollY]);
 
+  const navLinks = [
+    { href: "/work", label: "Work" },
+    { href: "/about", label: "About" },
+    { href: "/services", label: "Services" },
+    { href: "/ideas", label: "Ideas" },
+    { href: "/careers", label: "Careers" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   return (
     <div
       className={`fixed w-full py-3 px-24 z-50 transition-transform duration-300 ${
@@ -50,24 +61,19 @@ const Navbar = () => {
         </div>
         <div className="h-fit text-white font-semibold text-md">
           <ul className="flex gap-10 items-center">
-            <Link href="/work" className="hover:text-slate-700">
-              Work
-            </Link>
-            <Link href="/about" className="hover:text-slate-700">
-              About
-            </Link>
-            <Link href="/services" className="hover:text-slate-700">
-              Services
-            </Link>
-            <Link href="/ideas" className="hover:text-slate-700">
-              Ideas
-            </Link>
-            <Link href="/careers" className="hover:text-slate-700">
-              Careers
-            </Link>
-            <Link href="/contact" className="hover:text-slate-700">
-              Contact
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`hover:text-slate-700 ${
+                  pathname === link.href
+                    ? "border-b-2 border-white"
+                    : "border-b-2 border-transparent"
+                } pb-1`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </ul>
         </div>
       </div>
