@@ -11,7 +11,7 @@ const HeroSection = () => {
           fill
           className="object-cover bg-blend-overlay"
         />
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-black opacity-70"></div>
       </div>
 
       <div
