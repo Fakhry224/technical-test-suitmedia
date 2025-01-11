@@ -35,7 +35,7 @@ const IdeasPage = () => {
       {/* <Navbar /> */}
       <div className="flex flex-col">
         <HeroSection />
-        <div className="flex items-center justify-between mx-20 my-16">
+        <div className="flex items-center justify-between mx-24 my-16">
           <p>
             Showing 1 - {filteredData.length} of {data.length}
           </p>
